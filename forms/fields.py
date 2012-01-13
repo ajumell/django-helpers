@@ -1,0 +1,90 @@
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+
+def set_property(field, args, name, target):
+    if name in args:
+        val = args[name]
+        setattr(field, target, val)
+
+
+def update_class_name(field, class_name):
+    if class_name is not None:
+        attr = field.widget.attrs
+        old_class = attr.get('class', '')
+        attr['class'] = class_name if old_class == '' else "%s %s" % (old_class, class_name)
+
+
+def common_properties(
+    field,
+    help_text=None,
+    required=None,
+    label=None,
+    error_messages=None,
+    initial_value=None,
+
+    class_name=None,
+    container_class=None,
+    label_class=None,
+
+    class_names=None,
+
+    extra_options=None
+):
+    if label is not None:
+        field.label = _(label)
+
+    if container_class is not None:
+        field.container_class = container_class
+
+    if label_class is not None:
+        field.label_class = label_class
+
+    if help_text is not None:
+        field.help_text = help_text
+
+    if class_name is not None:
+        update_class_name(field, class_name)
+
+    if error_messages is not None:
+        field.error_messages.update(error_messages)
+
+    if required is not None:
+        field.required = required
+
+    if initial_value is not None:
+        field.initial = initial_value
+
+    if extra_options is not None:
+        for key, value in extra_options.values():
+            setattr(field, key, value)
+
+    if class_names is not None:
+        for class_name in class_names:
+            update_class_name(field, class_name)
+
+    field.localize = False
+    field.required = required
+
+
+def CharField(
+    label=None,
+    max_length=None,
+    min_length=None,
+    required=None,
+    class_names=None,
+    class_name=None
+):
+    field = forms.CharField()
+    common_properties(
+        field,
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names,
+        extra_options={
+            "max_length": max_length,
+            "min_length": min_length,
+            }
+    )
+    return field
