@@ -28,9 +28,11 @@ def common_properties(
     label_class=None,
 
     class_names=None,
-
-    extra_options=None
+    extra_options=None,
+    widget_options=None
 ):
+    widget = field.wiget
+
     if label is not None:
         field.label = _(label)
 
@@ -62,6 +64,10 @@ def common_properties(
     if class_names is not None:
         for class_name in class_names:
             update_class_name(field, class_name)
+
+    if widget_options is not None:
+        for key, value in widget_options.values():
+            setattr(widget, key, value)
 
     field.localize = False
     field.required = required
