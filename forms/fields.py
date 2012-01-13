@@ -15,7 +15,7 @@ def update_class_name(field, class_name):
         attr['class'] = class_name if old_class == '' else "%s %s" % (old_class, class_name)
 
 
-def common_properties(
+def factory(
     field,
     help_text=None,
     required=None,
@@ -81,7 +81,7 @@ def CharField(
     class_names=None,
     class_name=None
 ):
-    return common_properties(
+    return factory(
         forms.CharField(),
         label=label,
         required=required,
@@ -102,7 +102,7 @@ def PasswordField(
     class_names=None,
     class_name=None
 ):
-    return common_properties(
+    return factory(
         forms.CharField(widget=forms.PasswordInput()),
         label=label,
         required=required,
@@ -113,3 +113,25 @@ def PasswordField(
             "min_length": min_length,
             }
     )
+
+
+def EmailField(
+    label=None,
+    max_length=None,
+    min_length=None,
+    required=None,
+    class_names=None,
+    class_name=None
+):
+    return factory(
+        forms.EmailField(),
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names,
+        extra_options={
+            "max_length": max_length,
+            "min_length": min_length,
+            }
+    )
+
