@@ -75,9 +75,8 @@ def CharField(
     class_names=None,
     class_name=None
 ):
-    field = forms.CharField()
-    common_properties(
-        field,
+    return common_properties(
+        forms.CharField(),
         label=label,
         required=required,
         class_name=class_name,
@@ -87,4 +86,24 @@ def CharField(
             "min_length": min_length,
             }
     )
-    return field
+
+
+def PasswordField(
+    label=None,
+    max_length=None,
+    min_length=None,
+    required=None,
+    class_names=None,
+    class_name=None
+):
+    return common_properties(
+        forms.CharField(widget=forms.PasswordInput()),
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names,
+        extra_options={
+            "max_length": max_length,
+            "min_length": min_length,
+            }
+    )
