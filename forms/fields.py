@@ -31,7 +31,7 @@ def factory(
     extra_options=None,
     widget_options=None
 ):
-    widget = field.wiget
+    widget = field.widget
 
     if label is not None:
         field.label = _(label)
@@ -58,7 +58,8 @@ def factory(
         field.initial = initial_value
 
     if extra_options is not None:
-        for key, value in extra_options.values():
+        print extra_options.values()
+        for key, value in extra_options.items():
             setattr(field, key, value)
 
     if class_names is not None:
@@ -66,11 +67,13 @@ def factory(
             update_class_name(field, class_name)
 
     if widget_options is not None:
-        for key, value in widget_options.values():
+        for key, value in widget_options.items():
             setattr(widget, key, value)
 
     field.localize = False
     field.required = required
+
+    return field
 
 
 def CharField(
@@ -132,6 +135,29 @@ def EmailField(
         extra_options={
             "max_length": max_length,
             "min_length": min_length,
+            "email": True
+            }
+    )
+
+
+def IntegerField(
+    label=None,
+    max_length=None,
+    min_length=None,
+    required=None,
+    class_names=None,
+    class_name=None
+):
+    return factory(
+        forms.IntegerField(),
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names,
+        extra_options={
+            "max_length": max_length,
+            "min_length": min_length,
+            "integer": True
             }
     )
 
