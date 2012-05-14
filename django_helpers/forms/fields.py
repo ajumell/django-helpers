@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
+from widgets import DateInput
 
 def set_property(field, args, name, target):
     if name in args:
@@ -65,7 +65,8 @@ def factory(field, help_text=None, required=None,
     return field
 
 
-def CharField(label=None, max_length=None, min_length=None, required=None, class_names=None, class_name=None):
+def CharField(label=None, max_length=None, min_length=None,
+              required=None, class_names=None, class_name=None):
     return factory(
         forms.CharField(),
         label=label,
@@ -123,5 +124,23 @@ def IntegerField(label=None, max_length=None, min_length=None,
             "min_length": min_length,
             "integer": True
         }
+    )
+
+
+def DateField(label=None, format=None, max_date=None,
+              min_date=None, change_year=None, change_month=None,
+              required=None, class_names=None, class_name=None):
+    return factory(
+        forms.DateField(widget=DateInput(
+            max_date=max_date,
+            min_date=min_date,
+            format=format,
+            change_year=change_year,
+            change_month=change_month
+        )),
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names
     )
 
