@@ -34,7 +34,17 @@ def data_table(request, query, fields):
             "college__name",
             "course__name"
         ]
-    }, name='students-data-table'),
+    }, name='students-data-table')
+
+
+    @param request: A HttpRequest object
+    @type request: django.http.HttpRequest
+
+    @param fields: A array of fields to be returned as response
+    @type fields: list
+
+    @param query: Query for which filters has to be applied.
+    @type query: django.db.models.query.QuerySet
 
     """
     GET = request.GET

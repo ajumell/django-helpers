@@ -15,21 +15,10 @@ def update_class_name(field, class_name):
         attr['class'] = class_name if old_class == '' else "%s %s" % (old_class, class_name)
 
 
-def factory(
-    field,
-    help_text=None,
-    required=None,
-    label=None,
-    error_messages=None,
-    initial_value=None,
-
-    class_name=None,
-    container_class=None,
-    label_class=None,
-
-    class_names=None,
-    extra_options=None,
-    widget_options=None
+def factory(field, help_text=None, required=None,
+            label=None, error_messages=None, initial_value=None,
+            class_name=None, container_class=None, label_class=None,
+            class_names=None, extra_options=None, widget_options=None
 ):
     widget = field.widget
 
@@ -58,7 +47,7 @@ def factory(
         field.initial = initial_value
 
     if extra_options is not None:
-        print extra_options.values()
+        #print extra_options.values()
         for key, value in extra_options.items():
             setattr(field, key, value)
 
@@ -76,14 +65,7 @@ def factory(
     return field
 
 
-def CharField(
-    label=None,
-    max_length=None,
-    min_length=None,
-    required=None,
-    class_names=None,
-    class_name=None
-):
+def CharField(label=None, max_length=None, min_length=None, required=None, class_names=None, class_name=None):
     return factory(
         forms.CharField(),
         label=label,
@@ -97,14 +79,8 @@ def CharField(
     )
 
 
-def PasswordField(
-    label=None,
-    max_length=None,
-    min_length=None,
-    required=None,
-    class_names=None,
-    class_name=None
-):
+def PasswordField(label=None, max_length=None, min_length=None,
+                  required=None, class_names=None, class_name=None):
     return factory(
         forms.CharField(widget=forms.PasswordInput()),
         label=label,
@@ -118,14 +94,8 @@ def PasswordField(
     )
 
 
-def EmailField(
-    label=None,
-    max_length=None,
-    min_length=None,
-    required=None,
-    class_names=None,
-    class_name=None
-):
+def EmailField(label=None, max_length=None, min_length=None,
+               required=None, class_names=None, class_name=None):
     return factory(
         forms.EmailField(),
         label=label,
@@ -136,18 +106,12 @@ def EmailField(
             "max_length": max_length,
             "min_length": min_length,
             "email": True
-            }
+        }
     )
 
 
-def IntegerField(
-    label=None,
-    max_length=None,
-    min_length=None,
-    required=None,
-    class_names=None,
-    class_name=None
-):
+def IntegerField(label=None, max_length=None, min_length=None,
+                 required=None, class_names=None, class_name=None):
     return factory(
         forms.IntegerField(),
         label=label,
@@ -158,6 +122,6 @@ def IntegerField(
             "max_length": max_length,
             "min_length": min_length,
             "integer": True
-            }
+        }
     )
 
