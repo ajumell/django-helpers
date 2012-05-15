@@ -55,10 +55,23 @@ class AutoCompleteWidget(Widget, fields.TextInput):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ""
-        else:
+
+        self.input_type = "hidden"
+        hidden = fields.TextInput.render(self, name, value)
+        self.name = name
+
+        if value is not "":
             obj = self.queryset.get(id=value)
-            value = str(obj)
-        return fields.TextInput.render(self, name, value, attrs)
+            try:
+                obj = obj.autocomplete()
+            except Exception:
+                obj = str(obj)
+        else:
+            obj = ""
+
+        self.input_type = "text"
+        display = fields.TextInput.render(self, name + "_display", obj, attrs)
+        return display + hidden
 
     def render_js(self):
         source = reverse(self.source)
@@ -67,6 +80,6 @@ class AutoCompleteWidget(Widget, fields.TextInput):
             "delay": self.delay,
             "source": source,
             "id": self.html_id,
-            "value": self.current_value
-            })
+            "name": self.name
+        })
         return op
