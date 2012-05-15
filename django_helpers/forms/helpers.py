@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from widgets import DateInput
+from widgets import DateInput, AutoCompleteWidget
+import formfields
 
 def set_property(field, args, name, target):
     if name in args:
@@ -144,3 +145,15 @@ def DateField(label=None, format=None, max_date=None,
         class_names=class_names
     )
 
+
+def AutoCompleteField(queryset, label=None, source=None, min_length=2, delay=0,
+                      required=None, class_names=None, class_name=None):
+    widget=AutoCompleteWidget(delay=delay, min_length=min_length,
+                              source=source, queryset=queryset)
+    return factory(
+        formfields.AutoCompleteField(queryset=queryset, widget=widget),
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names
+    )

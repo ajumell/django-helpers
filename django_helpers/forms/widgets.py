@@ -1,8 +1,10 @@
+from django.core.urlresolvers import reverse
 from django.forms import fields
 from django.template.loader import render_to_string
 
 class Widget:
     attrs = None
+    has_js = True
 
     def build_attrs(self, extra_attrs=None, **kwargs):
         """
@@ -19,8 +21,6 @@ class Widget:
 
 
 class DateInput(Widget, fields.DateInput):
-    has_js = True
-
     def __init__(self, attrs=None, format=None, max_date=None,
                  min_date=None, change_year=None, change_month=None):
         fields.DateInput.__init__(self, attrs, format)
@@ -40,3 +40,33 @@ class DateInput(Widget, fields.DateInput):
             "date_format": self.format
         })
 
+
+class AutoCompleteWidget(Widget, fields.TextInput):
+    current_value = None
+
+    def __init__(self, attrs=None, delay=None, min_length=None, source=None, queryset=None):
+        fields.TextInput.__init__(self, attrs)
+
+        self.min_length = min_length
+        self.delay = delay
+        self.source = source
+        self.queryset = queryset
+
+    def render(self, name, value, attrs=None):
+        if value is None:
+            value = ""
+        else:
+            obj = self.queryset.get(id=value)
+            value = str(obj)
+        return fields.TextInput.render(self, name, value, attrs)
+
+    def render_js(self):
+        source = reverse(self.source)
+        op = render_to_string('xs-forms/js/auto-complete.js', {
+            "min_length": self.min_length,
+            "delay": self.delay,
+            "source": source,
+            "id": self.html_id,
+            "value": self.current_value
+            })
+        return op
