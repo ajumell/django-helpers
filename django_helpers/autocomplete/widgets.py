@@ -22,13 +22,13 @@ class AutoCompleteWidget(Widget, fields.TextInput):
         hidden = fields.TextInput.render(self, name, value)
         self.name = name
 
-        if value is not "":
+        try:
             obj = get_value(self.lookup, value)
             try:
                 obj = obj.autocomplete()
             except Exception:
                 obj = str(obj)
-        else:
+        except  Exception:
             obj = ""
 
         self.input_type = "text"
@@ -36,14 +36,10 @@ class AutoCompleteWidget(Widget, fields.TextInput):
         return display + hidden
 
     def render_js(self):
-        try:
-            source = reverse("auto-complete-lookup", kwargs={
-                "name": self.lookup
-            })
-        except Exception, data:
-            print data
-            print '\n' * 3
-            source = ""
+        source = reverse("auto-complete-lookup", kwargs={
+            "name": self.lookup
+        })
+
         op = render_to_string('xs-forms/js/auto-complete.js', {
             "min_length": self.min_length,
             "delay": self.delay,

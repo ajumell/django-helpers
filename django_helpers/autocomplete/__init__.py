@@ -30,12 +30,26 @@ def get_instance(name, id):
     return queryset.get(pk=id)
 
 
+def get_formatter(name):
+    if not lookups.has_key(name):
+        raise Exception("Lookup with name %s does not exists", name)
+    return lookups[name]["display"]
+
+
+def format_value(formatter, instance):
+    if formatter is None:
+        return str(instance)
+    string, terms = formatter
+    lst = []
+    for term in terms:
+        lst.append(getattr(instance, term))
+    return string % tuple(lst)
+
+
 def get_value(name, id):
     obj = get_instance(name, id)
-    try:
-        return obj.autocomplete()
-    except Exception:
-        return str(obj)
+    formatter = get_formatter(name)
+    return format_value(formatter, obj)
 
 
 if not has_initialized:

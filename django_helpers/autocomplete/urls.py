@@ -3,5 +3,5 @@ import views
 
 urlpatterns = patterns(
     '',
-    url(r'(?P<name>.*)/', views.lookup, name='auto-complete-lookup')
+    url(r'(?P<name>.*)/', views.autocomplete_lookup, name='auto-complete-lookup')
 )
