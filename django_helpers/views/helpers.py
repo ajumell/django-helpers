@@ -8,7 +8,7 @@ def redirect(to):
     return HttpResponseRedirect(reverse(to))
 
 
-def render_to_response(template, request, data):
+def render_to_response(template, request, data=None):
     """
     Renders the given template with given data and returns the HttpResponse
 
@@ -27,6 +27,10 @@ def render_to_response(template, request, data):
     template = loader.get_template(template)
     html = template.render(context)
     return HttpResponse(html)
+
+
+def render_template(request, template, data=None):
+    return render_to_response(template, request, data)
 
 
 def render_to_string(template, values=None):
