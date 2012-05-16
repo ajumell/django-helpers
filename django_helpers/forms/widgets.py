@@ -44,7 +44,7 @@ class DateInput(Widget, fields.DateInput):
 class AutoCompleteWidget(Widget, fields.TextInput):
     current_value = None
 
-    def __init__(self, attrs=None, delay=None, min_length=None, source=None, queryset=None):
+    def __init__(self, attrs=None, delay=0, min_length=1, source=None, queryset=None):
         fields.TextInput.__init__(self, attrs)
 
         self.min_length = min_length
