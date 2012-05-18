@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader, Context
+from django.views.decorators.csrf import csrf_exempt
 
 
 def redirect(to):
@@ -146,3 +147,19 @@ def form_view(request,
     template_dict['form'] = form
 
     return render_to_response(template, request, template_dict)
+
+
+@csrf_exempt
+def delete_items_ajax(request, Model):
+    """
+    A generic view to delete items from a model using ajax.
+    @param request:
+    @type request: django.http.HttpRequest
+    @return:
+    """
+    if request.is_ajax():
+        values = request.POST.getlist('values[]')
+        query = Model.objects.filter(pk__in=values)
+        query.delete()
+        return HttpResponse('true')
+    return HttpResponse('false')

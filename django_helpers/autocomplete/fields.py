@@ -1,5 +1,5 @@
 from django import forms
-from django_helpers.autocomplete import get_instance
+from django_helpers.autocomplete import get_instance, format_value, get_formatter
 
 class AutoCompleteField(forms.Field):
     def __init__(self, lookup, *args, **kwargs):
@@ -11,10 +11,11 @@ class AutoCompleteField(forms.Field):
         try:
             if not value: raise
             instance = get_instance(self.lookup, value)
-            # TODO: Send formatted value to widget
+            formatter = get_formatter(self.lookup)
+            self.widget.formatted_value = format_value(formatter, instance)
             return instance
         except Exception:
-            self.widget.current_value = ""
+            self.widget.formatted_value = ""
             if self.required:
                 raise forms.ValidationError(self.error_messages['required'])
             return None
