@@ -5,8 +5,8 @@ from django.template import RequestContext, loader, Context
 from django.views.decorators.csrf import csrf_exempt
 
 
-def redirect(to):
-    return HttpResponseRedirect(reverse(to))
+def redirect(to, args=None, kwargs=None):
+    return HttpResponseRedirect(reverse(to, args=args, kwargs=kwargs))
 
 
 def render_to_response(template, request, data=None):
@@ -30,7 +30,14 @@ def render_to_response(template, request, data=None):
     return HttpResponse(html)
 
 
-def render_template(request, template, data=None):
+def render_template(request, template, data=None, url_params=None, **kwargs):
+    if url_params is not None:
+        if data is None:
+            data = dict()
+        for url_param in url_params:
+            param_value = kwargs.get(url_param, '')
+            if param_value != "0":
+                data[url_param] = param_value
     return render_to_response(template, request, data)
 
 
@@ -88,6 +95,7 @@ def form_view(request,
               Form,
               success_view,
               form_heading,
+              success_view_args=None,
               success_message=None,
               current_user_field=None,
               submit_button="Submit",
@@ -96,6 +104,7 @@ def form_view(request,
               obj_instance=None,
               custom_form_arguments=None,
               template_dict=None,
+              obj_url_params=None,
               *args,
               **kwargs
 ):
@@ -123,16 +132,24 @@ def form_view(request,
             form = Form(request.POST, **custom_form_arguments)
 
         if form.is_valid():
+            obj = form.save(False)
             if current_user_field is not None:
-                obj = form.save(False)
                 setattr(obj, current_user_field, request.user)
-                obj.save()
-            else:
-                form.save()
+            if obj_url_params is not None:
+                for param in obj_url_params:
+                    setattr(obj, param, kwargs.get(param))
+
+            obj.save()
 
             if success_message is not None:
                 messages.success(request, success_message)
-            return redirect(success_view)
+            if success_view_args is not None:
+                args = list()
+                for argument in success_view_args:
+                    args.append(kwargs.get(argument))
+                return redirect(success_view, tuple(args))
+            else:
+                return redirect(success_view)
         else:
             form.error_message = error_message
     else:
