@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 from simplejson import dumps
 
-def data_table(request, query, fields):
+def data_table(request, query, fields, extra_params=None, **kwargs):
     """
         A view to provide data to jQuery data table plugin. This plugin will
     automatically collect parameters send by the data table plugin and
@@ -56,6 +56,15 @@ def data_table(request, query, fields):
     max_items = int(gt('iDisplayLength'))
     search_term = gt('sSearch')
     total_length = query.count()
+
+    # Perform extra params
+    if extra_params is not None:
+        filter_dict = {}
+        for param_name in extra_params:
+            param_value = kwargs.get(param_name, '')
+            if param_value != '':
+                filter_dict[param_name] = param_value
+        query = query.filter(**filter_dict)
 
     # Collect sort fields and apply sorts
     sorts, i = [], 0
