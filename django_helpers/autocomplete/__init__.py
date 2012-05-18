@@ -39,6 +39,10 @@ def get_formatter(name):
 def format_value(formatter, instance):
     if formatter is None:
         return str(instance)
+
+    if hasattr(formatter, "__call__"):
+        return formatter(instance)
+
     string, terms = formatter
     lst = []
     for term in terms:
