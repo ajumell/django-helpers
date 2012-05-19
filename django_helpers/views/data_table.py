@@ -49,6 +49,16 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     """
     # TODO: Latest docs of url params
 
+
+    # Perform extra params
+    if extra_params is not None:
+        filter_dict = {}
+        for param_name in extra_params:
+            param_value = kwargs.get(param_name, '')
+            if param_value != '':
+                filter_dict[param_name] = param_value
+        query = query.filter(**filter_dict)
+
     GET = request.GET
     gt = GET.get
 
@@ -60,21 +70,15 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     total_length = query.count()
     need_related = False
 
-    # Perform extra params
-    if extra_params is not None:
-        filter_dict = {}
-        for param_name in extra_params:
-            param_value = kwargs.get(param_name, '')
-            if param_value != '':
-                filter_dict[param_name] = param_value
-        query = query.filter(**filter_dict)
-
     # Collect sort fields and apply sorts
     sorts, i = [], 0
     while i < no_of_coloums:
         # Detect if select_related is needed.
-        if not need_related and fields[i].find('__') > -1:
-            need_related = True
+        try:
+            if not need_related and fields[i].find('__') > -1:
+                need_related = True
+        except Exception:
+            pass
 
         col = gt("iSortCol_%d" % i)
         if col is not None:
