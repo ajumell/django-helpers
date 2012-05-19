@@ -23,7 +23,7 @@ def search(lookup, term):
     return queryset.filter(query)
 
 
-def autocomplete_lookup(request, lookup):
+def autocomplete_lookup(request, lookup, **kwargs):
     # If lookup does not exists then return blank array.
     # This is prevent any exceptions at runtime.
     if not lookups.has_key(lookup):
@@ -31,8 +31,17 @@ def autocomplete_lookup(request, lookup):
 
     lookup = lookups[lookup]
     formatter = lookup['label_formatter']
+    parameters = lookup['extra_url_parameters']
     term = request.GET.get("term")
     query = search(lookup, term)
+
+    #
+    #   Find and do filtering on extra parameters
+    #
+    for parameter in parameters:
+        args_dict = {parameter: kwargs.get(parameter, '')}
+        query = query.filter(**args_dict)
+
     results = []
     for result in query:
         val = format_value(formatter, result)
@@ -44,7 +53,11 @@ def autocomplete_lookup(request, lookup):
     return HttpResponse(simplejson.dumps(results))
 
 
-def register(name, queryset, search_fields, label_formatter=None, replace=False):
+def create_reg(name):
+    return "(?P<%s>.*)/" % name
+
+
+def register(name, queryset, search_fields, label_formatter=None, replace=False, extra_url_parameters=None):
     """
     @param name: name of the lookup
     @param queryset: A Queryset to which filtering has to be applied
@@ -58,13 +71,21 @@ def register(name, queryset, search_fields, label_formatter=None, replace=False)
     lookups[name] = {
         "queryset": queryset,
         "search-fields": search_fields,
-        "label_formatter": label_formatter
+        "label_formatter": label_formatter,
+        "extra_url_parameters": extra_url_parameters
     }
-    reg = r"lookups/%s/" % name
-    pattern = url(reg, autocomplete_lookup, name="lookup-%s" % name, kwargs={
+
+    reg = "lookups/%s/" % name
+    if extra_url_parameters is not None:
+        for parameter in extra_url_parameters:
+            reg += create_reg(parameter)
+    reg += "$"
+
+    pattern = url(r"%s" % reg, autocomplete_lookup, name="lookup-%s" % name, kwargs={
         "lookup": name
     })
     urlpatterns.append(pattern)
+    print urlpatterns
 
 
 def get_queryset(name):
