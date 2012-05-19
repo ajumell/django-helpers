@@ -116,7 +116,6 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     current_length = query.count()
     query = query[start_pos:start_pos + max_items]
     query = query.values_list(*fields)
-    print query, type(query)
     result = {
         "aaData": list(query),
         "sEcho": echo,
