@@ -1,7 +1,6 @@
-from django.conf.urls import url, patterns
-import views
+from django.conf.urls import  patterns
 
 urlpatterns = patterns(
     '',
-    url(r'(?P<name>.*)/', views.autocomplete_lookup, name='auto-complete-lookup')
+    #url(r'(?P<name>.*)/', views.autocomplete_lookup, name='auto-complete-lookup')
 )

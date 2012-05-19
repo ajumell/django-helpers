@@ -25,9 +25,7 @@ class AutoCompleteWidget(Widget, fields.TextInput):
         return display + hidden
 
     def render_js(self):
-        source = reverse("auto-complete-lookup", kwargs={
-            "name": self.lookup
-        })
+        source = reverse("lookup-%s" % self.lookup)
 
         op = render_to_string('xs-forms/js/auto-complete.js', {
             "min_length": self.min_length,
