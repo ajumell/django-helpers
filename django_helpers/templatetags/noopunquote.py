@@ -1,5 +1,5 @@
 from django import template
-from helpers import remove_breaks
+from urllib2 import unquote
 
 register = template.Library()
 
@@ -15,13 +15,13 @@ class NoOopNode(template.Node):
                 output += bit
             else:
                 output += bit.render(context)
-
-        print remove_breaks(output)
-        return remove_breaks(output)
+        while output.find('\n') >= 0:
+            output = output.replace('\n', '')
+        return unquote(output)
 
 
 @register.tag
-def noop(parser, token):
+def unquote_noop(parser, token):
     text_and_nodes = []
     while 1:
         token = parser.tokens.pop(0)
