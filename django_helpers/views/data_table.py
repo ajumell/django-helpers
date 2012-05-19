@@ -47,6 +47,8 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     @type query: django.db.models.query.QuerySet
 
     """
+    # TODO: Latest docs of url params
+
     GET = request.GET
     gt = GET.get
 
@@ -56,6 +58,7 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     max_items = int(gt('iDisplayLength'))
     search_term = gt('sSearch')
     total_length = query.count()
+    need_related = False
 
     # Perform extra params
     if extra_params is not None:
@@ -69,6 +72,10 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     # Collect sort fields and apply sorts
     sorts, i = [], 0
     while i < no_of_coloums:
+        # Detect if select_related is needed.
+        if not need_related and fields[i].find('__') > -1:
+            need_related = True
+
         col = gt("iSortCol_%d" % i)
         if col is not None:
             col = int(col)
@@ -79,6 +86,10 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
         i += 1
     sorts = tuple(sorts)
     query = query.order_by(*sorts)
+
+    # Select related fields if necessary
+    if need_related:
+        query = query.select_related()
 
     if search_term != "":
         # Collect sort fields and apply search
