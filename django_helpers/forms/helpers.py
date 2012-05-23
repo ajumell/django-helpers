@@ -113,17 +113,19 @@ def EmailField(label=None, max_length=None, min_length=None,
     )
 
 
-def IntegerField(label=None, max_length=None, min_length=None,
-                 required=None, class_names=None, class_name=None):
+def IntegerField(label=None, max_value=None, min_value=None,
+                 required=None, class_names=None, class_name=None, initial_value=None):
+    if class_names is None:
+        class_names = []
+    class_names.append('spin')
     return factory(
-        forms.IntegerField(),
+        forms.IntegerField(min_value=min_value, max_value=max_value),
+        initial_value=initial_value,
         label=label,
         required=required,
         class_name=class_name,
         class_names=class_names,
         extra_options={
-            "max_length": max_length,
-            "min_length": min_length,
             "integer": True
         }
     )
