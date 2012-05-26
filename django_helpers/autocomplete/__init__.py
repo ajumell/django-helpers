@@ -57,7 +57,7 @@ def autocomplete_lookup(request, lookup, **kwargs):
         results.append({
             "id": result.id,
             "name": val,
-        })
+            })
     return HttpResponse(simplejson.dumps(results))
 
 
@@ -107,6 +107,11 @@ def get_instance(name, id):
     return queryset.get(pk=id)
 
 
+def get_instances(name, ids):
+    queryset = get_queryset(name)
+    return queryset.filter(pk__in=ids)
+
+
 def get_formatter(lookup, name='label'):
     if not lookups.has_key(lookup):
         raise Exception("Lookup with name %s does not exists", lookup)
@@ -117,6 +122,7 @@ def format_value(formatter, instance):
     if formatter is None:
         return str(instance)
 
+    # Check for function
     if hasattr(formatter, "__call__"):
         return formatter(instance)
 
