@@ -38,3 +38,17 @@ class DateInput(Widget, fields.DateInput):
             "id": self.html_id,
             "date_format": self.format
         })
+
+
+class MaskedInput(Widget, fields.CharField):
+    def __init__(self, mask, placeholder="_", *args, **kwargs):
+        fields.CharField.__init__(*args, **kwargs)
+        self.mask = mask
+        self.placeholder = placeholder
+
+    def render_js(self):
+        return render_to_string('xs-forms/js/mask-input.js', {
+            "mask": self.mask,
+            "id": self.html_id,
+            "placeholder": self.placeholder
+        })
