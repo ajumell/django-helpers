@@ -8,6 +8,7 @@
   <component name="TemplatesService">
     <option name="templateLanguage" value="Django" />
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
+    <option name="TEMPLATES_IN_JAVASCRIPT" value="true" />
     <option name="TEMPLATE_FOLDERS">
       <list>
         <option value="$MODULE_DIR$/django_helpers/templates" />
