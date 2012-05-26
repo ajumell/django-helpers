@@ -19,8 +19,8 @@ jQuery(function ($) {
          */
         select : function (ui, item) {
             item = item.item;
-            obj.val(item.value);
-            current_value = item.value;
+            obj.val(item.name);
+            current_value = item.name;
             hidden.val(item.id);
             return false;
         }

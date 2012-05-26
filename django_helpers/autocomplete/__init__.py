@@ -32,7 +32,13 @@ def autocomplete_lookup(request, lookup, **kwargs):
     lookup = lookups[lookup]
     formatter = lookup['label_formatter']
     parameters = lookup['extra_url_parameters']
+
+    # For jQuery auto complete
     term = request.GET.get("term")
+
+    # For
+    if term is None:
+        term = request.GET.get('q')
     query = search(lookup, term)
 
     #
@@ -45,10 +51,12 @@ def autocomplete_lookup(request, lookup, **kwargs):
     results = []
     for result in query:
         val = format_value(formatter, result)
+        # Renamed value for adding support for
+        # jQuery toekn field. The value can be
+        # controlled for jQuery auto complete.
         results.append({
             "id": result.id,
-            "value": val,
-            "label": val
+            "name": val,
         })
     return HttpResponse(simplejson.dumps(results))
 
