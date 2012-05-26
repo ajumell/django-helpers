@@ -1,7 +1,10 @@
 from django import forms
 from django_helpers.autocomplete import get_instance, format_value, get_formatter
+from widgets import AutoCompleteWidget
 
 class AutoCompleteField(forms.Field):
+    widget = AutoCompleteWidget
+
     def __init__(self, lookup, *args, **kwargs):
         self.lookup = lookup
         forms.Field.__init__(self, *args, **kwargs)
@@ -19,3 +22,12 @@ class AutoCompleteField(forms.Field):
             if self.required:
                 raise forms.ValidationError(self.error_messages['required'])
             return None
+
+
+class SimpleAutoCompleteField(forms.Field):
+    widget = AutoCompleteWidget
+
+    def clean(self, value):
+        value = forms.Field.clean(self, value)
+        self.widget.formatted_value = value
+        return value
