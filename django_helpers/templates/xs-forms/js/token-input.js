@@ -4,6 +4,7 @@ jQuery(function ($) {
         {% if hint_text %}hintText : "{{ hint_text }}", {% endif %}
         {% if no_result_text %}noResultsText : "{{ no_result_text }}", {% endif %}
         {% if searching_text %}searchingText : "{{ searching_text }}", {% endif %}
+        {% if searching_text %}theme : "{{ theme }}", {% endif %}
         {% if delay %}searchDelay : {{ delay }}, {% endif %}
         {% if min_chars %}minChars : {{ min_chars }}, {% endif %}
         {% if limit %}tokenLimit : {{ limit }}, {% endif %}
