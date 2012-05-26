@@ -1,5 +1,5 @@
 jQuery(function ($) {
-    $('#{{ id }}').datepicker({
+    $('#' + '{{ id }}').datepicker({
         dataFormat : "{{ date_format }}",
         {% if change_month %}changeMonth : true, {% endif %}
         {% if change_year %}changeYear : true, {% endif %}
