@@ -1,6 +1,5 @@
 jQuery(function ($) {
 
-
     var obj = $('#' + '{{ id }}'),
         hidden = $('input[type=hidden][name=' + '{{ name }}]'),
         current_value = "{{ value }}",
@@ -21,13 +20,9 @@ jQuery(function ($) {
          */
         select : function (ui, item) {
             item = item.item;
-
             obj.val(item.label);
-            hidden.val(item.id);
-
-            current_label = item.label;
-            current_value = item.id;
-
+            current_value = item.label;
+            hidden.val(item.label);
             return false;
         }
     });
@@ -40,12 +35,6 @@ jQuery(function ($) {
      changed by the user.
      */
     obj.blur(function () {
-        if (current_value) {
-            if (obj.val() !== current_label) {
-                hidden.val('');
-            } else {
-                hidden.val(current_value);
-            }
-        }
+        hidden.val(obj.val());
     });
 });
