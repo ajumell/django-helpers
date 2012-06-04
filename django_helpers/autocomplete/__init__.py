@@ -44,9 +44,10 @@ def autocomplete_lookup(request, lookup, **kwargs):
     #
     #   Find and do filtering on extra parameters
     #
-    for parameter in parameters:
-        args_dict = {parameter: kwargs.get(parameter, '')}
-        query = query.filter(**args_dict)
+    if parameters is not None:
+        for parameter in parameters:
+            args_dict = {parameter: kwargs.get(parameter, '')}
+            query = query.filter(**args_dict)
 
     results = []
     for result in query:
@@ -56,7 +57,7 @@ def autocomplete_lookup(request, lookup, **kwargs):
         # controlled for jQuery auto complete.
         results.append({
             "id": result.id,
-            "name": val,
+            "label": val,
             })
     return HttpResponse(simplejson.dumps(results))
 
@@ -93,7 +94,6 @@ def register(name, queryset, search_fields, label_formatter=None, replace=False,
         "lookup": name
     })
     urlpatterns.append(pattern)
-    print urlpatterns
 
 
 def get_queryset(name):
