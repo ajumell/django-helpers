@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.forms import fields
 from django.template.loader import render_to_string
-from django_helpers.autocomplete import  get_formatter, format_value, get_instance
+from django_helpers.autocomplete import  get_formatter, format_value, get_instance, get_instances
 from django_helpers.forms.widgets import Widget
 
 class AutoCompleteWidget(Widget, fields.TextInput):
@@ -86,6 +86,8 @@ class TokenInputWidget(Widget, fields.TextInput):
 
     def render(self, name, value, attrs=None):
         self.name = name
+        if self.instances is None:
+            self.instances = get_instances(self.lookup, value)
         return fields.TextInput.render(self, name, "", attrs)
 
 
