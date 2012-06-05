@@ -12,4 +12,7 @@ class CheckJsMiddleware:
         """
         cookie = request.COOKIES.get('has_js', None)
         if cookie is None:
-            return render_template(request, 'check_js.html')
+            data = {
+                'location': request.get_full_path()
+            }
+            return render_template(request, 'check_js.html',data)

@@ -1,5 +1,7 @@
 from django.forms import fields
+from django.forms.util import flatatt
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 
 class Widget:
     attrs = None
@@ -40,9 +42,9 @@ class DateInput(Widget, fields.DateInput):
         })
 
 
-class MaskedInput(Widget, fields.CharField):
+class MaskedInput(Widget, fields.TextInput):
     def __init__(self, mask, placeholder="_", *args, **kwargs):
-        fields.CharField.__init__(*args, **kwargs)
+        fields.TextInput.__init__(self, *args, **kwargs)
         self.mask = mask
         self.placeholder = placeholder
 
@@ -51,4 +53,40 @@ class MaskedInput(Widget, fields.CharField):
             "mask": self.mask,
             "id": self.html_id,
             "placeholder": self.placeholder
+        })
+
+
+class SpinnerInput(Widget, fields.TextInput):
+    pass
+
+
+class RatingWidget(Widget, fields.TextInput):
+    def __init__(self, number=5, cancel=False, half=False, size=16, *args, **kwargs):
+        # TODO: Add more options from plugin
+        fields.TextInput.__init__(self, *args, **kwargs)
+        self.number = number
+        self.cancel = cancel
+        self.half = half
+        self.size = size
+
+    def render(self, name, value, attrs=None):
+        if value is None:
+            value = 0
+
+        self.input_type = "hidden"
+        hidden = fields.TextInput.render(self, name, value)
+        final_attrs = self.build_attrs(attrs)
+        self.value = value
+        self.name = name
+        return mark_safe(u'<div%s></div>' % flatatt(final_attrs)) + hidden
+
+    def render_js(self):
+        return render_to_string('xs-forms/js/raty.js', {
+            "number": self.number,
+            "half": self.half,
+            "size": self.size,
+            "name": self.name,
+            "id": self.html_id,
+            "score": self.value,
+            "cancel": self.cancel
         })

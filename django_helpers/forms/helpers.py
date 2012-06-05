@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from widgets import DateInput
 from django_helpers.autocomplete import fields
-from django_helpers.autocomplete.widgets import AutoCompleteWidget
+from django_helpers.autocomplete.widgets import AutoCompleteWidget, SimpleAutoCompleteWidget
 
 def set_property(field, args, name, target):
     if name in args:
@@ -155,6 +155,19 @@ def AutoCompleteField(lookup, label=None, min_length=2, delay=0,
                                 lookup=lookup)
     return factory(
         fields.AutoCompleteField(lookup=lookup, widget=widget),
+        label=label,
+        required=required,
+        class_name=class_name,
+        class_names=class_names
+    )
+
+
+def SimpleAutoCompleteField(lookup, label=None, min_length=2, delay=0,
+                            required=None, class_names=None, class_name=None):
+    widget = SimpleAutoCompleteWidget(delay=delay, min_length=min_length,
+                                      lookup=lookup)
+    return factory(
+        fields.SimpleAutoCompleteField(widget=widget),
         label=label,
         required=required,
         class_name=class_name,
