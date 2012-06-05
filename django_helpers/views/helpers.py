@@ -114,6 +114,7 @@ def form_view(request,
               custom_form_arguments=None,
               template_dict=None,
               obj_url_params=None,
+              has_many_to_many=False,
               **kwargs
 ):
     """
@@ -143,9 +144,11 @@ def form_view(request,
             form = Form(request.POST, **custom_form_arguments)
 
         if form.is_valid():
-            obj = form.save(False)
+            obj = form.save(has_many_to_many)
+
             if current_user_field is not None:
                 setattr(obj, current_user_field, request.user)
+
             if obj_url_params is not None:
                 for param in obj_url_params:
                     setattr(obj, param, kwargs.get(param))
