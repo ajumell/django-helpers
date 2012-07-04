@@ -57,7 +57,32 @@ class MaskedInput(Widget, fields.TextInput):
 
 
 class SpinnerInput(Widget, fields.TextInput):
-    pass
+    def __init__(self, min_value=None, max_value=None, places=None, prefix="",
+                 step=1, largeStep=10, *args, **kwargs):
+        # TODO: Add more options from plugin
+        fields.TextInput.__init__(self, *args, **kwargs)
+        self.min_value = min_value
+        self.max_value = max_value
+        self.places = places
+        self.prefix = prefix
+        self.step = step
+        self.largeStep = largeStep
+
+    def render(self, name, value, attrs=None):
+        self.value = value
+        return fields.TextInput.render(self, name, self.prefix + str(value), attrs)
+
+    def render_js(self):
+        return render_to_string('xs-forms/js/mask-input.js', {
+            "min": self.min_value,
+            "max": self.max_value,
+            "prefix": self.prefix,
+            "places": self.places,
+            "value": self.value,
+            "step": self.step,
+            "largeStep": self.largeStep,
+            "id": self.html_id
+        })
 
 
 class RatingWidget(Widget, fields.TextInput):
