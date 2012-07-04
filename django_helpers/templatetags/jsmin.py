@@ -197,37 +197,6 @@ class JavascriptMinify(object):
                 previous_non_space = previous
 
 
-def main():
-    if len(sys.argv) == 1: return
-    source = ""
-    for x in sys.argv[1:]:
-        if x[-3:] != '.js':
-            print "Invalid file '" + x + "'"
-            print "This application compresses only Javascript files."
-            print
-            print
-            continue
-        try:
-            f = file(x)
-            source = source + f.read()
-        except Exception, data:
-            print data
-
-    compressed = jsmin(source)
-    oFile = file('compressed.js', 'w')
-    oFile.write(compressed)
-    oFile.close()
-
-if __name__ == "__main__":
-    main()
-
-
-def do_jsmin(parser, token):
-    nodelist = parser.parse(('endjsmin',))
-    parser.delete_first_token()
-    return JsMinNode(nodelist)
-
-
 class JsMinNode(template.Node):
     def __init__(self, nodelist):
         self.nodelist = nodelist
@@ -235,12 +204,6 @@ class JsMinNode(template.Node):
     def render(self, context):
         output = self.nodelist.render(context)
         return jsmin(output)
-
-
-def do_jsrmln(parser, token):
-    nodelist = parser.parse(('endjsrmln',))
-    parser.delete_first_token()
-    return JsRmLnNode(nodelist)
 
 
 class JsRmLnNode(template.Node):
@@ -254,9 +217,40 @@ class JsRmLnNode(template.Node):
         for line in lines:
             if str(line).strip() != "":
                 result.append(line)
-        return "\n".join(result )
+        return "\n".join(result)
+
+
+class RemoveLastComaNode(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        output = self.nodelist.render(context)
+        output = output.strip()
+        if output[-1:] == ',':
+            output = output[:-1]
+        return output
+
+
+def do_jsmin(parser, token):
+    nodelist = parser.parse(('endjsmin',))
+    parser.delete_first_token()
+    return JsMinNode(nodelist)
+
+
+def do_jsrmln(parser, token):
+    nodelist = parser.parse(('endjsrmln',))
+    parser.delete_first_token()
+    return JsRmLnNode(nodelist)
+
+
+def do_remove_last_coma(parser, token):
+    nodelist = parser.parse(('endremovecoma',))
+    parser.delete_first_token()
+    return RemoveLastComaNode(nodelist)
 
 
 register = template.Library()
 register.tag('jsmin', do_jsmin)
 register.tag('jsrmln', do_jsrmln)
+register.tag('removecoma', do_remove_last_coma)
