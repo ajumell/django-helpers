@@ -115,6 +115,7 @@ def form_view(request,
               template_dict=None,
               obj_url_params=None,
               has_many_to_many=False,
+              url_params=None,
               **kwargs
 ):
     """
@@ -182,6 +183,12 @@ def form_view(request,
             template_dict['form_error_message'] = error_message
     else:
         form = Form(**custom_form_arguments)
+
+    if url_params is not None:
+        for url_param in url_params:
+            param_value = kwargs.get(url_param, '')
+            if param_value != "":
+                template_dict[url_param] = param_value
 
     template_dict['form'] = form
     template_dict['form_submit'] = submit_button
