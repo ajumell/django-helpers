@@ -152,7 +152,12 @@ def form_view(request,
 
             if obj_url_params is not None:
                 for param in obj_url_params:
-                    setattr(obj, param, kwargs.get(param))
+                    if type(param) == tuple:
+                        val = kwargs.get(param[1])
+                        param = param[0]
+                    else:
+                        val = kwargs.get(param)
+                    setattr(obj, param, val)
 
             obj.save()
             if request.is_ajax():
