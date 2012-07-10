@@ -49,9 +49,12 @@ def render_json(dictionary):
     return HttpResponse(string, mimetype=mimetype)
 
 
-def render_to_string(template, values=None):
+def render_to_string(template, values=None, request=None):
     template = loader.get_template(template)
-    context = Context(values)
+    if request is None:
+        context = Context(values)
+    else:
+        context = RequestContext(request, values)
     html = template.render(context)
     return html
 
