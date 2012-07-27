@@ -1,8 +1,8 @@
 from django.core.urlresolvers import reverse
 from django.forms import fields
 from django.template.loader import render_to_string
-from django_helpers.autocomplete import  get_formatter, format_value, get_instance, get_instances
 from django_helpers.forms.widgets import Widget
+from django_helpers.autocomplete import register
 
 class AutoCompleteWidget(Widget, fields.TextInput):
     formatted_value = None
@@ -10,10 +10,10 @@ class AutoCompleteWidget(Widget, fields.TextInput):
 
     def __init__(self, attrs=None, delay=0, min_length=1, lookup=None):
         fields.TextInput.__init__(self, attrs)
-
+        register(lookup)
+        self.auto_complete = lookup()
         self.min_length = min_length
         self.delay = delay
-        self.lookup = lookup
 
     def get_formatted_value(self, value):
         if not value:
@@ -21,9 +21,9 @@ class AutoCompleteWidget(Widget, fields.TextInput):
 
         # Edit mode in model field.
         if self.formatted_value is None:
-            instance = get_instance(self.lookup, value)
-            formatter = get_formatter(self.lookup)
-            val = format_value(formatter, instance)
+            auto_complete = self.auto_complete
+            instance = auto_complete.get_instance(value)
+            val = auto_complete.format_value(instance)
         else:
             val = self.formatted_value
         self.formatted_value = val
@@ -47,7 +47,7 @@ class AutoCompleteWidget(Widget, fields.TextInput):
         return '%s_display' % id_
 
     def render_js(self):
-        source = reverse("lookup-%s" % self.lookup)
+        source = reverse(self.auto_complete.name)
         value = self.value or ""
         op = render_to_string(self.template, {
             "min_length": self.min_length,
@@ -74,7 +74,8 @@ class TokenInputWidget(Widget, fields.TextInput):
     def __init__(self, lookup, hint_text=None, no_result_text=None, searching_text=None, delay=0,
                  min_chars=1, limit=None, prevent_duplicates=True, theme=None, *args, **kwargs):
         fields.TextInput.__init__(self, *args, **kwargs)
-        self.lookup = lookup
+        register(lookup)
+        self.auto_complete = lookup()
         self.hint_text = hint_text
         self.no_result_text = no_result_text
         self.searching_text = searching_text
@@ -87,19 +88,20 @@ class TokenInputWidget(Widget, fields.TextInput):
     def render(self, name, value, attrs=None):
         self.name = name
         if self.instances is None:
-            self.instances = get_instances(self.lookup, value)
+            auto_complete = self.auto_complete
+            self.instances = auto_complete.get_instances(value)
         return fields.TextInput.render(self, name, "", attrs)
 
 
     def render_js(self):
-        source = reverse("lookup-%s" % self.lookup)
+        source = reverse(self.auto_complete.name)
         instances = self.instances
-        formatter = get_formatter(self.lookup)
         formatted_values = []
         if instances:
+            auto_complete = self.auto_complete
             for instance in instances:
                 formatted_values.append({
-                    "name": format_value(formatter, instance),
+                    "name": auto_complete.format_value(instance),
                     "id": instance.pk
                 })
 

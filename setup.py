@@ -74,7 +74,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'bdist_wininst':
 
 setup(
     name='django-helpers',
-    version='0.0.3.' + str(time()),
+    version='0.0.4', # + str(time()),
     long_description='',
     description='Django Helpers and form addons.',
     author='Muhammed K K',
@@ -94,7 +94,5 @@ setup(
 
     install_requires=[
         "Django >= 1.4"
-    ],
-
-    zip_safe=False
+    ]
 )

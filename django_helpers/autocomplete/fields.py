@@ -1,5 +1,4 @@
 from django import forms
-from django_helpers.autocomplete import get_instance, get_instances, format_value, get_formatter
 from widgets import AutoCompleteWidget
 
 class AutoCompleteField(forms.Field):
@@ -7,15 +6,15 @@ class AutoCompleteField(forms.Field):
 
     def __init__(self, lookup, *args, **kwargs):
         forms.Field.__init__(self, *args, **kwargs)
-        self.lookup = lookup
+        self.auto_complete = lookup()
 
     def clean(self, value):
         value = forms.Field.clean(self, value)
+        auto_complete = self.auto_complete
         try:
             if not value: raise
-            instance = get_instance(self.lookup, value)
-            formatter = get_formatter(self.lookup)
-            self.widget.formatted_value = format_value(formatter, instance)
+            instance = auto_complete.get_instances(value)
+            self.widget.formatted_value = auto_complete.format_value(instance)
             return instance
         except Exception:
             self.widget.formatted_value = ""
@@ -35,8 +34,8 @@ class SimpleAutoCompleteField(forms.Field):
 
 class ManyToManyAutoCompleteField(forms.Field):
     def __init__(self, lookup, *args, **kwargs):
-        self.lookup = lookup
         forms.Field.__init__(self, *args, **kwargs)
+        self.auto_complete = lookup()
 
     def clean(self, value):
         value = forms.Field.clean(self, value)
@@ -44,7 +43,8 @@ class ManyToManyAutoCompleteField(forms.Field):
             if not value:
                 raise
             value = value.split(',')
-            instances = get_instances(self.lookup, value)
+            auto_complete = self.auto_complete
+            instances = auto_complete.get_instances(value)
             self.widget.instances = instances
             return instances
         except Exception:
