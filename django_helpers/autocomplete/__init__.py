@@ -14,6 +14,7 @@ class AutoComplete(object):
     query_set = None
     search_fields = []
     url_search_parameters = None
+    requires_auth = False
 
     __name__ = "__undefined__"
 
