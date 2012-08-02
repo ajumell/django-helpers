@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.db.models import Q
-from simplejson import dumps
+from django.utils.simplejson import dumps
 
 def data_table(request, query, fields, extra_params=None, **kwargs):
     """
@@ -50,7 +50,8 @@ def data_table(request, query, fields, extra_params=None, **kwargs):
     # TODO: Latest docs of url params
 
 
-    # Perform extra params
+    # Perform extra filtering from named url parameters
+    # send from url dispatcher.
     if extra_params is not None:
         filter_dict = {}
         for param_name in extra_params:

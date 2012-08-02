@@ -1,4 +1,4 @@
-import simplejson
+from django.utils.simplejson import dumps
 import time
 from urls import  urlpatterns
 from django.db.models import Q
@@ -88,7 +88,7 @@ def autocomplete_lookup(request, lookup, **kwargs):
     auto_complete = lookups[lookup]()
 
     results = auto_complete.get_results(request, kwargs)
-    return HttpResponse(simplejson.dumps(results))
+    return HttpResponse(dumps(results))
 
 
 def create_reg(name):

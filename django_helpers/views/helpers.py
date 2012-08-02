@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader, Context
-from django.utils import simplejson
+from django.utils.simplejson import dumps
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -44,7 +44,7 @@ def render_template(request, template, data=None, url_params=None, **kwargs):
 
 
 def render_json(dictionary):
-    string = simplejson.dumps(dictionary)
+    string = dumps(dictionary)
     mimetype = 'application/javascript'
     return HttpResponse(string, mimetype=mimetype)
 
