@@ -1,0 +1,52 @@
+{% block html %}
+    <table id="{{ table_id }}" {% if width %}style="width: {{ width }}" {% endif %}>
+        <thead>
+        <tr>
+            {% for coloum in coloums %}
+                <th{% if title_class %} class="{{ title_class }}" {% endif %}>{{ coloum.title }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="{{ coloums|length }}">{% block loading_message %}{{ loading_message }}{% endblock %}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        jQuery(function () {
+            $("#" + "{{ table_id }}").dataTable({
+
+                "bProcessing" : true,
+                "bServerSide" : true,
+
+                "iDisplayLength" : {{ display_length }},
+                "aLengthMenu" : [
+                    [2, 3, 5, 10, 25, 50, 100],
+                    [2, 3, 5, 10, 25, 50, 100]
+                ],
+
+                "fnDrawCallback" : function (oSettings) {
+                    {% block draw_callback %}{% endblock %}
+                },
+
+                "sPaginationType" : "full_numbers", {# TODO: Make this a variable #}
+                "bPaginate" : true, {# TODO: Make this a variable #}
+                "sDom" : '{{ dom|escapejs }}',
+                "sAjaxSource" : "{{ ajax_source }}",
+                "aoColumns" : [
+                    {% for coloum in coloums %}
+                        {
+                            "bSortable" : {% if coloum.sortable %}true{% else %}false{% endif %},
+                            "bSearchable" : {% if coloum.searchable %}true{% else %}false{% endif %},
+                            {% if coloum.width %}"sWidth": "{{ coloum.width }}" {% endif %}
+                        },
+                    {% endfor %}
+                ]
+            });
+        });
+    </script>
+{% endblock %}
