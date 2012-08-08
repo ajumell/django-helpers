@@ -34,6 +34,10 @@ class DataTableColoum(object):
         return self.field.find('__') > -1
 
 
+class DataTableClientRenderedColoum(DataTableColoum):
+    pass
+
+
 class DataTableTemplateColoum(DataTableColoum):
     template = None
     width = None
