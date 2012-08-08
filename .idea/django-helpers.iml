@@ -12,6 +12,8 @@
     <option name="TEMPLATE_FOLDERS">
       <list>
         <option value="$MODULE_DIR$/django_helpers/templates" />
+        <option value="$MODULE_DIR$/django_helpers/apps/data_tables/templates" />
+        <option value="$MODULE_DIR$/django_helpers/autocomplete/templates" />
       </list>
     </option>
   </component>
