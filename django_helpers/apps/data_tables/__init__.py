@@ -1,13 +1,12 @@
 import time
+
 from django.core.urlresolvers import reverse
 from urls import  urlpatterns
 from django.db.models import Q
 from django.conf.urls import url
-from django.template import loader
 from django.http import HttpResponse
-from django.template.base import Template
 from django.utils.simplejson import dumps
-from django.template.context import RequestContext, Context
+from django.template import Template, loader, RequestContext, Context
 
 
 __author__ = "ajumell"
@@ -40,7 +39,8 @@ class DataTableTemplateColoum(DataTableColoum):
     width = None
     value_name = "value"
 
-    def __init__(self, field, title, searchable, sortable, template, load_template=True, width=None, value_name='value'):
+    def __init__(self, field, title, searchable, sortable, template,
+                 load_template=True, width=None, value_name='value'):
         DataTableColoum.__init__(self, field, title, searchable, sortable)
         if load_template:
             template = loader.get_template(template)
@@ -79,11 +79,6 @@ class DataTable(object):
     dom = '<f>t<plir>'
     template = 'data_tables/table.html'
 
-    def add_coloum(self, coloum):
-        coloums = self.coloums
-        coloum.index = len(coloums)
-        coloums.append(coloum)
-
     def __unicode__(self):
         template = loader.get_template(self.template)
         context = Context({
@@ -101,7 +96,7 @@ class DataTable(object):
         gt = GET.get
 
         coloums = self.coloums
-        query = self.query
+        query = self.query.filter()
         extra_params = self.url_search_parameters
         if extra_params is not None:
             filter_dict = {}
@@ -170,7 +165,7 @@ def get_data(request, name, **kwargs):
     if not tables.has_key(name):
         return HttpResponse()
 
-    table = tables[name]()
+    table = tables[name]
 
     results = table.get_data(request, kwargs)
     return results
@@ -185,6 +180,9 @@ def register(data_table):
     if isinstance(data_table, DataTable):
         raise Exception("DataTable class is required not instance.")
 
+    if not issubclass(data_table, DataTable):
+        raise Exception("A Sub class of DataTable is required.")
+
     if not hasattr(data_table, 'table_id'):
         name = str(time.time())
         name = name.replace('.', '')
@@ -195,7 +193,7 @@ def register(data_table):
         name = url_prefix + name
 
     setattr(data_table, 'table_id', name)
-
+    data_table = data_table()
     tables[name] = data_table
     reg = "%s/" % name
     extra_url_parameters = data_table.url_search_parameters
@@ -207,4 +205,6 @@ def register(data_table):
     pattern = url(r"%s" % reg, get_data, name=name, kwargs={
         "name": name
     })
+
     urlpatterns.append(pattern)
+    return data_table
