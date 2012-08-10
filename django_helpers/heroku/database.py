@@ -8,6 +8,10 @@ urlparse.uses_netloc.append('mysql')
 
 def has_clear_db():
     """
+    This function returns true if the clear db database url is present
+    in the environmental variable. The environmental variable will be
+    automatically added by heroku if clear db addon is used in the project.
+
     @return: True if the clear db database url is present in the
     enviroment variables.
     """
@@ -16,6 +20,12 @@ def has_clear_db():
 
 def parse_clear_db(throw_exception=False, print_exception=False):
     """
+    This function returns a dictionary with clear db database settings.
+
+    The database settings are parased from the clear db database url enviroment
+    variable. This will be added by heroku when clear db addon is used in the
+    project.
+
     @param throw_exception: Throws the exception if any exception occures.
     @param print_exception: Prints the exception data if any exception occures.
     @return: A dictionary with the clear db database settings.
