@@ -7,10 +7,19 @@ __author__ = 'ajumell'
 urlparse.uses_netloc.append('mysql')
 
 def has_clear_db():
+    """
+    @return: True if the clear db database url is present in the
+    enviroment variables.
+    """
     return 'CLEARDB_DATABASE_URL' in os.environ
 
 
 def parse_clear_db(throw_exception=False, print_exception=False):
+    """
+    @param throw_exception: Throws the exception if any exception occures.
+    @param print_exception: Prints the exception data if any exception occures.
+    @return: A dictionary with the clear db database settings.
+    """
     try:
         if has_clear_db():
             config = {}
