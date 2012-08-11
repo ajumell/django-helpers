@@ -1,5 +1,9 @@
 #! /usr/bin/python
 
+"""
+This file is mostly copied from the django setup file.
+"""
+
 __author__ = 'ajumell'
 
 from time import time
@@ -74,12 +78,12 @@ if len(sys.argv) > 1 and sys.argv[1] == 'bdist_wininst':
 
 setup(
     name='django-helpers',
-    version='0.0.5', # + str(time()),
+    version='0.0.6', # + str(time()),
     long_description='',
     description='Django Helpers and form addons.',
     author='Muhammed K K',
     author_email='ajumell@gmail.com',
-    url="http://www.xeoscript.com/",
+    url="https://bitbucket.org/ajumell/django_helpers/",
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
