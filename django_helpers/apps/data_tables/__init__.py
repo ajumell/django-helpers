@@ -14,11 +14,6 @@ __author__ = "ajumell"
 tables = dict()
 
 class DataTableColoum(object):
-    field = None
-    title = None
-    sortable = False
-    searchable = False
-
     def __init__(self, field, title, searchable, sortable):
         self.field = field
         self.title = title
@@ -35,16 +30,35 @@ class DataTableColoum(object):
 
 
 class DataTableClientRenderedColoum(DataTableColoum):
+    """
+    This class is still under planning.
+    """
     pass
 
 
 class DataTableTemplateColoum(DataTableColoum):
-    template = None
-    width = None
-    value_name = "value"
+    """
+    A Data table coloum which will return a rendered
+    a template insted of a database field.
+    """
 
     def __init__(self, field, title, searchable, sortable, template,
                  load_template=True, width=None, value_name='value'):
+        """
+        @param field: The name of the field to be passed to the template.
+        @param title: Title of the coloum which will be displayed in the table header.
+        @param searchable: jQuery data table option searchable
+        @param sortable: jQuery data table option sortable
+        @param template: Template to be rendered as the return value.
+        This can be either a django.template.Template object or a sting.
+        If a string is passed then that template has to be loaded by give
+        load_template parameter as True.
+        @param load_template: If this parameter is true the template will
+        be loaded.
+        @param width: Width of the coloum
+        @param value_name: name of the variable that has to be passed to the template.
+        Its default value is "value"
+        """
         DataTableColoum.__init__(self, field, title, searchable, sortable)
         if load_template:
             template = loader.get_template(template)
